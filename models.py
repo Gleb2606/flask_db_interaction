@@ -8,15 +8,17 @@ class PowerPlant(db.Model):
     name = db.Column(db.String(100), unique=True, nullable=False)
     node = db.Column(db.Integer, unique=True, nullable=False)
 
-    predictions = db.relationship('Prediction', backref='powerplant', lazy=True)
+    model = db.relationship('Model', backref='powerplant', lazy=True)
 
 class Model(db.Model):
     __tablename__ = 'model'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), unique=True, nullable=False)
-    input_width = db.Column(db.Integer, unique=True, nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    input_width = db.Column(db.Integer, nullable=False)
+    data_in_frame = db.Column(db.Integer)
 
     predictions = db.relationship('Prediction', backref='model', lazy=True)
+    plant_id = db.Column(db.Integer, db.ForeignKey('powerplant.id'), nullable=False)
 
 class Prediction(db.Model):
     __tablename__ = 'prediction'
@@ -25,6 +27,12 @@ class Prediction(db.Model):
     scn_file = db.Column(db.String(100), nullable=False)
     result = db.Column(db.String(100), unique=True, nullable=False)
 
-    plant_id = db.Column(db.Integer, db.ForeignKey('powerplant.id'), nullable=False)
-
     model_id = db.Column(db.Integer, db.ForeignKey('model.id'), nullable=False)
+
+class Generator(db.Model):
+    __tablename__ = 'generator'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), unique=True, nullable=False)
+    node = db.Column(db.Integer, unique=True, nullable=False)
+
+    plant_id = db.Column(db.Integer, db.ForeignKey('powerplant.id'), nullable=False)
